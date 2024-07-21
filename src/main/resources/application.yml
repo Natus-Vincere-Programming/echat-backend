@@ -14,3 +14,4 @@ spring:
 logging:
   level:
     web: trace
+    org.springframework.security: trace

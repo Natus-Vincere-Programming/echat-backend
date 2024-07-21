@@ -20,7 +20,7 @@ public class TestRunner implements ApplicationRunner {
                 .status(Status.OFFLINE)
                 .firstname("Test")
                 .lastname("Test")
-                .password("test")
+                .password("{noop}test")
                 .username("tetst")
                 .build();
         userRepository.save(user);
