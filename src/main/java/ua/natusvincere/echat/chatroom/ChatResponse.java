@@ -1,4 +1,4 @@
-package ua.natusvincere.echat.chat;
+package ua.natusvincere.echat.chatroom;
 
 import lombok.*;
 
@@ -9,10 +9,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ChatNotification {
+public class ChatResponse {
 
     private String chatId;
     private UUID senderId;
-    private UUID recipientId;
-    private String content;
+    private UUID receiverId;
 }

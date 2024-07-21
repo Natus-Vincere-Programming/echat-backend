@@ -11,13 +11,13 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "chat_rooms")
-public class ChatRoom {
+@Table(name = "chats")
+public class Chat {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    private String chatId;
+    private UUID chatId;
     private UUID senderId;
     private UUID receiverId;
 }

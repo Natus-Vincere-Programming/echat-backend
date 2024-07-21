@@ -12,23 +12,6 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public void saveUser(User user) {
-        user.setStatus(Status.ONLINE);
-        repository.save(user);
-    }
-
-    public void disconnectUser(User user) {
-        User storedUser = repository.findById(user.getId()).orElse(null);
-        if (storedUser != null) {
-            storedUser.setStatus(Status.OFFLINE);
-            repository.save(storedUser);
-        }
-    }
-
-    public List<User> findConnectedUsers() {
-        return repository.findAllByStatus(Status.ONLINE);
-    }
-
     public UUID registerUser(RegisterUserRequest request) {
         User user = User.builder()
                 .username(request.username())
@@ -38,5 +21,18 @@ public class UserService {
                 .status(Status.OFFLINE)
                 .build();
         return repository.save(user).getId();
+    }
+
+    public UserResponse getUser(UUID userId) {
+        User user = repository.findById(userId).orElseThrow(() -> new UserNotFoundException(
+                String.format("User with id %s not found", userId)
+        ));
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .status(user.getStatus())
+                .build();
     }
 }
