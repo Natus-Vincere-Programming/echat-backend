@@ -1,0 +1,20 @@
+services:
+  postgresql:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: balamut
+      POSTGRES_PASSWORD: maksym
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - echat-net
+    restart: unless-stopped
+networks:
+  echat-net:
+    driver: bridge
+volumes:
+  postgres:
