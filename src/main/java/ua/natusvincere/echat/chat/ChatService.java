@@ -1,8 +1,7 @@
-package ua.natusvincere.echat.chatroom;
+package ua.natusvincere.echat.chat;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import ua.natusvincere.echat.user.User;

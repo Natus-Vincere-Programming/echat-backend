@@ -13,6 +13,13 @@ services:
     networks:
       - echat-net
     restart: unless-stopped
+  backend:
+    container_name: backend
+    image: xemii16/echat:0.0.1-SNAPSHOT
+    ports:
+      - "8080:8080"
+    networks:
+      - echat-net
 networks:
   echat-net:
     driver: bridge

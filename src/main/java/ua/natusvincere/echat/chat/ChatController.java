@@ -1,9 +1,7 @@
-package ua.natusvincere.echat.chatroom;
+package ua.natusvincere.echat.chat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;

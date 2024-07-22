@@ -3,7 +3,6 @@ package ua.natusvincere.echat.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,5 +33,29 @@ public class UserService {
                 .lastname(user.getLastname())
                 .status(user.getStatus())
                 .build();
+    }
+
+    public UserResponse searchUser(String username) {
+        return repository.findByUsername(username)
+                .map(user -> UserResponse.builder()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .firstname(user.getFirstname())
+                        .lastname(user.getLastname())
+                        .status(user.getStatus())
+                        .build())
+                .orElse(null);
+    }
+
+    public UserResponse getUser(String email) {
+        return repository.findByEmail(email)
+                .map(user -> UserResponse.builder()
+                        .id(user.getId())
+                        .username(user.getUsername())
+                        .firstname(user.getFirstname())
+                        .lastname(user.getLastname())
+                        .status(user.getStatus())
+                        .build())
+                .orElseThrow();
     }
 }

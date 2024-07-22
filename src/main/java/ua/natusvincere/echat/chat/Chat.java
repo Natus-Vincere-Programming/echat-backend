@@ -1,4 +1,4 @@
-package ua.natusvincere.echat.chatroom;
+package ua.natusvincere.echat.chat;
 
 import jakarta.persistence.*;
 import lombok.*;

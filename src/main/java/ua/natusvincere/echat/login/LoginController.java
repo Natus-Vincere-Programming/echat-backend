@@ -15,7 +15,7 @@ public class LoginController {
 
     private final AuthenticationManager authenticationManager;
 
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
     public void login(HttpServletRequest request) {
         String username = this.obtainUsername(request);
         username = username != null ? username : "";
