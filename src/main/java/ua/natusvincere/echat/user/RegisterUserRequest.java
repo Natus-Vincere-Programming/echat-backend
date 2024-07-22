@@ -1,10 +1,14 @@
 package ua.natusvincere.echat.user;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public record RegisterUserRequest (
-        String username,
-        String email,
-        String firstname,
-        String lastname,
-        String password
+        @NotBlank String username,
+        @NotBlank @Email String email,
+        @NotBlank String firstname,
+        @NotBlank String lastname,
+        @NotBlank @Size(min = 8) String password
 ){
 }

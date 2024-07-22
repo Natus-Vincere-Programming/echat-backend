@@ -6,10 +6,12 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import ua.natusvincere.echat.chat.Chat;
 import ua.natusvincere.echat.chat.ChatRepository;
+import ua.natusvincere.echat.exception.BadRequestException;
 import ua.natusvincere.echat.user.User;
 import ua.natusvincere.echat.user.UserRepository;
 
 import java.security.Principal;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -61,5 +63,24 @@ public class MessageService {
                 chat.getReceiverId().toString(),
                 destination, notification
         );
+    }
+
+    public MessageResponse getLastMessage(UUID chatId, Principal principal) {
+        User user = userRepository.findByEmail(principal.getName()).orElseThrow();
+        Chat chat = chatRepository.findByChatId(chatId)
+                .orElseThrow(() -> new BadRequestException("Chat not found"));
+        if (!chat.getSenderId().equals(user.getId()) && !chat.getReceiverId().equals(user.getId())) {
+            throw new BadRequestException("Chat does not belong to the user");
+        }
+        return messageRepository.findFirstByChatIdOrderByCreatedAtDesc(chatId)
+                .map(message -> MessageResponse.builder()
+                        .id(message.getId())
+                        .chatId(message.getChatId())
+                        .senderId(message.getSenderId())
+                        .message(message.getText())
+                        .status(message.getStatus())
+                        .createdAt(message.getCreatedAt())
+                        .build()
+                ).orElseThrow(() -> new BadRequestException("Message not found"));
     }
 }

@@ -1,5 +1,6 @@
 package ua.natusvincere.echat.login;
 
+import io.swagger.v3.oas.annotations.headers.Header;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
