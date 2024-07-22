@@ -1,6 +1,7 @@
 package ua.natusvincere.echat.user;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<UUID> registerUser(
-            @RequestBody RegisterUserRequest request
+            @RequestBody @Valid RegisterUserRequest request
     ) {
         return ResponseEntity.ok(service.registerUser(request));
     }
