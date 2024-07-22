@@ -21,12 +21,18 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @Column(nullable = false, unique = true)
     private String username;
+    @Column(nullable = false, unique = true)
     private String email;
+    @Column(nullable = false)
     private String firstname;
+    @Column(nullable = false)
     private String lastname;
+    @Column(nullable = false)
     private String password;
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Status status;
 
     @Override

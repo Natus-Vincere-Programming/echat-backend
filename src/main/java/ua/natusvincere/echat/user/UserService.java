@@ -17,6 +17,7 @@ public class UserService {
                 .email(request.email())
                 .firstname(request.firstname())
                 .lastname(request.lastname())
+                .password(request.password())
                 .status(Status.OFFLINE)
                 .build();
         return repository.save(user).getId();
