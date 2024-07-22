@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface MessageRepository extends JpaRepository<Message, UUID> {
     Optional<Message> findFirstByChatIdOrderByCreatedAtDesc(UUID chatId);
+
+    Long countByChatIdAndSenderIdAndStatus(UUID chatId, UUID senderId, MessageStatus status);
 }

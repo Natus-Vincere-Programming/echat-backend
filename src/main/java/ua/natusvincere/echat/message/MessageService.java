@@ -67,7 +67,7 @@ public class MessageService {
 
     public MessageResponse getLastMessage(UUID chatId, Principal principal) {
         User user = userRepository.findByEmail(principal.getName()).orElseThrow();
-        Chat chat = chatRepository.findByChatId(chatId)
+        Chat chat = chatRepository.findByChatIdAndSenderId(chatId, user.getId())
                 .orElseThrow(() -> new BadRequestException("Chat not found"));
         if (!chat.getSenderId().equals(user.getId()) && !chat.getReceiverId().equals(user.getId())) {
             throw new BadRequestException("Chat does not belong to the user");
@@ -82,5 +82,24 @@ public class MessageService {
                         .createdAt(message.getCreatedAt())
                         .build()
                 ).orElseThrow(() -> new BadRequestException("Message not found"));
+    }
+
+    public Long getAmountUnreadMessages(UUID chatId, Principal principal) {
+        User user = userRepository.findByEmail(principal.getName()).orElseThrow();
+        Chat chat = chatRepository.findByChatIdAndSenderId(chatId, user.getId())
+                .orElseThrow(() -> new BadRequestException("Chat not found"));
+        if (!chat.getSenderId().equals(user.getId()) && !chat.getReceiverId().equals(user.getId())) {
+            throw new BadRequestException("Chat does not belong to the user");
+        }
+        Long sent = messageRepository
+                .countByChatIdAndSenderIdAndStatus(
+                        chatId, chat.getReceiverId(), MessageStatus.SENT
+                );
+        Long delivered = messageRepository
+                .countByChatIdAndSenderIdAndStatus(
+                        chatId, chat.getReceiverId(), MessageStatus.DELIVERED
+                );
+
+        return sent + delivered;
     }
 }
