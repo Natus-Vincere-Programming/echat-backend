@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "ua.natusvincere"
-version = "0.0.5-SNAPSHOT"
+version = "0.0.6-SNAPSHOT"
 
 java {
 	toolchain {
@@ -32,7 +32,11 @@ dependencies {
 	implementation("org.springframework.security:spring-security-config")
 	implementation("org.springframework.security:spring-security-messaging")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.springframework.session:spring-session-data-redis")
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	testImplementation("org.springframework.security:spring-security-test")
+	implementation("com.maxmind.geoip2:geoip2:4.2.0")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")

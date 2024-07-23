@@ -17,7 +17,10 @@ public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+    @Column(nullable = false, updatable = false)
     private UUID chatId;
+    @Column(nullable = false, updatable = false)
     private UUID senderId;
+    @Column(nullable = false, updatable = false)
     private UUID receiverId;
 }

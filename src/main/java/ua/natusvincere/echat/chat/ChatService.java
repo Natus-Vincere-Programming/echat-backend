@@ -19,15 +19,15 @@ public class ChatService {
     private final SimpMessagingTemplate messagingTemplate;
     private final UserRepository userRepository;
 
-    public UUID getChatId(UUID senderId, UUID receiverId, boolean createIfNotExists) {
-        return repository.findBySenderIdAndReceiverId(senderId, receiverId)
+    public UUID getChatId(CreateChatRequest request, boolean createIfNotExists) {
+        return repository.findBySenderIdAndReceiverId(request.senderId(), request.receiverId())
                 .map(Chat::getChatId)
                 .or(() -> {
                     if (!createIfNotExists){
                         return Optional.empty();
                     }
-                    UUID chatId = createChat(senderId, receiverId);
-                    Optional<Chat> chat = repository.findByChatIdAndSenderId(chatId, receiverId);
+                    UUID chatId = createChat(request.senderId(), request.receiverId());
+                    Optional<Chat> chat = repository.findByChatIdAndSenderId(chatId, request.receiverId());
                     chat.ifPresent(this::informCreationChat);
                     return Optional.of(chatId);
                 }).orElseThrow();

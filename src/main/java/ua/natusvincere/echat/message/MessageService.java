@@ -25,7 +25,7 @@ public class MessageService {
         User user = userRepository.findByEmail(principal.getName()).orElseThrow();
         Message message = Message.builder()
                 .chatId(request.chatId())
-                .senderId(user.getId())
+                .sender(user)
                 .text(request.text())
                 .status(MessageStatus.SENT)
                 .build();
@@ -34,7 +34,7 @@ public class MessageService {
         return MessageResponse.builder()
                 .id(savedMessage.getId())
                 .chatId(savedMessage.getChatId())
-                .senderId(savedMessage.getSenderId())
+                .senderId(savedMessage.getSender().getId())
                 .message(savedMessage.getText())
                 .status(savedMessage.getStatus())
                 .createdAt(savedMessage.getCreatedAt())
@@ -45,18 +45,18 @@ public class MessageService {
     private void informChat(Message savedMessage) {
         Chat chat = chatRepository
                 .findByChatIdAndSenderId(
-                        savedMessage.getChatId(), savedMessage.getSenderId()
+                        savedMessage.getChatId(), savedMessage.getSender().getId()
                 ).orElseThrow();
         MessageNotification notification = MessageNotification.builder()
                 .createdAt(savedMessage.getCreatedAt())
                 .chatId(savedMessage.getChatId())
                 .text(savedMessage.getText())
-                .senderId(savedMessage.getSenderId())
+                .senderId(savedMessage.getSender().getId())
                 .status(savedMessage.getStatus())
                 .build();
         String destination = "/queue/messages";
         messagingTemplate.convertAndSendToUser(
-                savedMessage.getSenderId().toString(),
+                savedMessage.getSender().getId().toString(),
                 destination, notification
         );
         messagingTemplate.convertAndSendToUser(
@@ -76,7 +76,7 @@ public class MessageService {
                 .map(message -> MessageResponse.builder()
                         .id(message.getId())
                         .chatId(message.getChatId())
-                        .senderId(message.getSenderId())
+                        .senderId(message.getSender().getId())
                         .message(message.getText())
                         .status(message.getStatus())
                         .createdAt(message.getCreatedAt())

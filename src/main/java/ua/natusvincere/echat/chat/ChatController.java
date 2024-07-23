@@ -15,9 +15,9 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    @PostMapping("/{senderId}/{receiverId}")
-    public ResponseEntity<UUID> createChat(@PathVariable UUID senderId, @PathVariable UUID receiverId) {
-        return ResponseEntity.ok(chatService.getChatId(senderId, receiverId, true));
+    @PostMapping()
+    public ResponseEntity<UUID> createChat(CreateChatRequest request) {
+        return ResponseEntity.ok(chatService.getChatId(request, true));
     }
 
     @GetMapping()
