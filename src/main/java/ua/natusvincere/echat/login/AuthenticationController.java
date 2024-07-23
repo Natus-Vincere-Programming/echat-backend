@@ -1,6 +1,5 @@
 package ua.natusvincere.echat.login;
 
-import io.swagger.v3.oas.annotations.headers.Header;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,11 +11,11 @@ import java.util.Base64;
 
 @RestController
 @RequiredArgsConstructor
-public class LoginController {
+public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
 
-    @PostMapping("/login")
+    @PostMapping("/authenticate")
     public void login(HttpServletRequest request) {
         String username = this.obtainUsername(request);
         username = username != null ? username : "";

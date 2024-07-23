@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.SecurityFilterChain;
@@ -53,13 +54,13 @@ public class SecurityConfiguration {
         http.
                 authorizeHttpRequests(requests -> requests
                         .requestMatchers(WHITE_LIST_URL).permitAll()
-                        .requestMatchers(HttpMethod.POST,"/login").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/authenticate").permitAll()
                         .requestMatchers("/chats").authenticated()
                         .requestMatchers("/users/register").permitAll()
                         .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
-                .addFilterAfter(new SessionDetailsFilter(), UsernamePasswordAuthenticationFilter.class);
+                .cors(Customizer.withDefaults());
         return http.build();
     }
 
