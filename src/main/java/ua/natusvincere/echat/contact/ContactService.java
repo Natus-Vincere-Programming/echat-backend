@@ -1,5 +1,6 @@
 package ua.natusvincere.echat.contact;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ua.natusvincere.echat.exception.BadRequestException;
@@ -46,6 +47,7 @@ public class ContactService {
                 .toList();
     }
 
+    @Transactional
     public void deleteContact(UUID contactId, Principal principal) {
         User user = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new ForbiddenException("User not found"));
