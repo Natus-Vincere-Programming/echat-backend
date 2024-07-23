@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "ua.natusvincere"
-version = "0.0.7-SNAPSHOT"
+version = "0.1.0-SNAPSHOT"
 
 java {
 	toolchain {
@@ -32,8 +32,9 @@ dependencies {
 	implementation("org.springframework.security:spring-security-config")
 	implementation("org.springframework.security:spring-security-messaging")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("org.springframework.session:spring-session-data-redis")
-	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	testImplementation("org.springframework.security:spring-security-test")
 	implementation("com.maxmind.geoip2:geoip2:4.2.0")

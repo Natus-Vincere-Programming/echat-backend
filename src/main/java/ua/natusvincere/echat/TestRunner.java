@@ -3,6 +3,7 @@ package ua.natusvincere.echat;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ua.natusvincere.echat.chat.Chat;
 import ua.natusvincere.echat.chat.ChatRepository;
@@ -22,6 +23,7 @@ public class TestRunner implements ApplicationRunner {
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -30,7 +32,7 @@ public class TestRunner implements ApplicationRunner {
                 .status(Status.OFFLINE)
                 .firstname("Test")
                 .lastname("Test")
-                .password("{noop}test")
+                .password(passwordEncoder.encode("test"))
                 .username("tetst")
                 .build();
         User user1 = User.builder()
@@ -38,7 +40,7 @@ public class TestRunner implements ApplicationRunner {
                 .status(Status.OFFLINE)
                 .firstname("Test1")
                 .lastname("Test1")
-                .password("{noop}test")
+                .password(passwordEncoder.encode("test1"))
                 .username("tetst1")
                 .build();
         userRepository.save(user);
