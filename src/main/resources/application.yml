@@ -3,7 +3,7 @@ spring:
     name: eChat
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://postgres:5432/chat
+    url: jdbc:postgresql://localhost:5432/chat
     username: balamut
     password: maksym
   jpa:
@@ -11,10 +11,6 @@ spring:
       ddl-auto: create-drop
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-logging:
-  level:
-    web: trace
-    org.springframework.security: trace
 application:
   security:
     jwt:

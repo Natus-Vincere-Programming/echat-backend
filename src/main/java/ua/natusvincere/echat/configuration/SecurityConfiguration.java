@@ -70,6 +70,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
+                                .requestMatchers(GET, "/api/v1/users/search", "/api/v1/users/**").permitAll()
+                                .requestMatchers(GET, "/api/v1/users/info").authenticated()
                                 .requestMatchers(GET, "/api/v1/users/token/**", "/api/v1/users/token", "/api/v1/users/token/*").permitAll()
                                 .anyRequest()
                                 .authenticated()

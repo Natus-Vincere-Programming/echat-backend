@@ -2,6 +2,7 @@ package ua.natusvincere.echat.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ua.natusvincere.echat.exception.BadRequestException;
 
 import java.util.UUID;
 
@@ -24,7 +25,7 @@ public class UserService {
     }
 
     public UserResponse getUser(UUID userId) {
-        User user = repository.findById(userId).orElseThrow(() -> new UserNotFoundException(
+        User user = repository.findById(userId).orElseThrow(() -> new BadRequestException(
                 String.format("User with id %s not found", userId)
         ));
         return UserResponse.builder()

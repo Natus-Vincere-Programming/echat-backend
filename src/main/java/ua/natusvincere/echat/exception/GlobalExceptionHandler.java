@@ -1,6 +1,9 @@
 package ua.natusvincere.echat.exception;
 
+import jakarta.validation.constraints.Null;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,11 +31,11 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadRequestException.class)
-    public Map<String, String> handleBadRequestException(
+    public ResponseEntity<Map<String, String>> handleBadRequestException(
             BadRequestException ex) {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", ex.getMessage());
-        return errors;
+        return ResponseEntity.badRequest().body(errors);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
