@@ -72,6 +72,7 @@ public class SecurityConfiguration {
                                 .permitAll()
                                 .requestMatchers(GET, "/api/v1/users/search", "/api/v1/users/**").permitAll()
                                 .requestMatchers(GET, "/api/v1/users/info").authenticated()
+                                .requestMatchers("/ws/**", "/ws").permitAll()
                                 .requestMatchers(GET, "/api/v1/users/token/**", "/api/v1/users/token", "/api/v1/users/token/*").permitAll()
                                 .anyRequest()
                                 .authenticated()

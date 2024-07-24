@@ -3,6 +3,7 @@ package ua.natusvincere.echat.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ua.natusvincere.echat.exception.BadRequestException;
+import ua.natusvincere.echat.exception.ForbiddenException;
 
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository repository;
+    private final UserRepository userRepository;
 
     public UUID registerUser(RegisterUserRequest request) {
         User user = User.builder()
@@ -59,5 +61,18 @@ public class UserService {
                         .status(user.getStatus())
                         .build())
                 .orElseThrow();
+    }
+
+    public UserResponse setUserOnline(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ForbiddenException("User not found"));
+        user.setStatus(Status.ONLINE);
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .status(user.getStatus())
+                .build();
     }
 }
