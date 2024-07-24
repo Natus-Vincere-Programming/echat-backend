@@ -61,14 +61,14 @@ public class TestRunner implements ApplicationRunner {
         Message message = Message.builder()
                 .chatId(chat.getChatId())
                 .sender(user)
-                .createdAt(Instant.now())
+                .createdAt(Instant.now().toEpochMilli())
                 .status(MessageStatus.DELIVERED)
                 .text("Hello")
                 .build();
         Message message1 = Message.builder()
                 .chatId(chat1.getChatId())
                 .sender(user1)
-                .createdAt(Instant.now().plusSeconds(360))
+                .createdAt(Instant.now().plusSeconds(360).toEpochMilli())
                 .status(MessageStatus.READ)
                 .text("Hello world")
                 .build();

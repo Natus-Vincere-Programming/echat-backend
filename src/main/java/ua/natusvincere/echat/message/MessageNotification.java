@@ -16,5 +16,5 @@ public class MessageNotification {
     private UUID senderId;
     private String text;
     private MessageStatus status;
-    private Instant createdAt;
+    private long createdAt;
 }

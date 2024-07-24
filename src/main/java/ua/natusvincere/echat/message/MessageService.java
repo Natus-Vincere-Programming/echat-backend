@@ -30,7 +30,7 @@ public class MessageService {
                 .chatId(request.chatId())
                 .sender(user)
                 .text(request.text())
-                .createdAt(Instant.now())
+                .createdAt(Instant.now().toEpochMilli())
                 .status(MessageStatus.SENT)
                 .build();
         Message savedMessage = messageRepository.save(message);

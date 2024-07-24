@@ -17,5 +17,5 @@ public class MessageResponse {
     private UUID senderId;
     private String message;
     private MessageStatus status;
-    private Instant createdAt;
+    private long createdAt;
 }

@@ -33,5 +33,5 @@ public class Message {
     @Column(nullable = false)
     private MessageStatus status;
     @Column(nullable = false, updatable = false)
-    private Instant createdAt;
+    private long createdAt;
 }
