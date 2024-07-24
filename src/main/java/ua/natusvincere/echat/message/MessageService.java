@@ -12,6 +12,8 @@ import ua.natusvincere.echat.user.User;
 import ua.natusvincere.echat.user.UserRepository;
 
 import java.security.Principal;
+import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -28,10 +30,12 @@ public class MessageService {
                 .chatId(request.chatId())
                 .sender(user)
                 .text(request.text())
+                .createdAt(Instant.now())
                 .status(MessageStatus.SENT)
                 .build();
         Message savedMessage = messageRepository.save(message);
-        informChat(savedMessage);
+        // TODO інформувати користувача про нове повідомлення
+        /*informChat(savedMessage);*/
         return MessageResponse.builder()
                 .id(savedMessage.getId())
                 .chatId(savedMessage.getChatId())
@@ -105,5 +109,24 @@ public class MessageService {
                 );
 
         return sent + delivered;
+    }
+
+    public List<MessageResponse> getMessages(Principal principal, UUID chatId) {
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ForbiddenException("User not found"));
+        if (!chatRepository.existsByChatIdAndSender(chatId, user)) {
+            throw new BadRequestException("Chat not found");
+        }
+        return messageRepository.findAllByChatId(chatId)
+                .stream()
+                .map(message -> MessageResponse.builder()
+                        .id(message.getId())
+                        .chatId(message.getChatId())
+                        .senderId(message.getSender().getId())
+                        .message(message.getText())
+                        .status(message.getStatus())
+                        .createdAt(message.getCreatedAt())
+                        .build()
+                ).toList();
     }
 }

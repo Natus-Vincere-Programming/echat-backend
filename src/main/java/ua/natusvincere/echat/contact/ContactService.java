@@ -41,7 +41,7 @@ public class ContactService {
                 .stream()
                 .map(contact -> ContactResponse.builder()
                         .id(contact.getId())
-                        .contactId(contact.getId())
+                        .contactId(contact.getContact().getId())
                         .build()
                 )
                 .toList();

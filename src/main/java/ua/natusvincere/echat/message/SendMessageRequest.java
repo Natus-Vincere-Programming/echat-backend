@@ -4,7 +4,6 @@ import java.util.UUID;
 
 public record SendMessageRequest(
         UUID chatId,
-        String senderId,
         String text
 ) {
 }

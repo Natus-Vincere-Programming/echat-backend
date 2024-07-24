@@ -17,4 +17,6 @@ public interface ChatRepository extends JpaRepository<Chat, UUID> {
     boolean existsByChatIdAndSenderId(UUID chatId, UUID senderId);
 
     void deleteByChatId(UUID chatId);
+
+    boolean existsByChatIdAndSender(UUID chatId, User user);
 }

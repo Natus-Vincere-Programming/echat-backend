@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "ua.natusvincere"
-version = "0.1.1-SNAPSHOT"
+version = "0.1.4-SNAPSHOT"
 
 java {
 	toolchain {
@@ -27,6 +27,7 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310");
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.security:spring-security-config")
