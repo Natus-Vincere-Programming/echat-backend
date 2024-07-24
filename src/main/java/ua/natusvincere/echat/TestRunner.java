@@ -48,13 +48,13 @@ public class TestRunner implements ApplicationRunner {
         UUID id = UUID.randomUUID();
         Chat chat = Chat.builder()
                 .chatId(id)
-                .senderId(user.getId())
-                .receiverId(user1.getId())
+                .sender(user)
+                .receiver(user1)
                 .build();
         Chat chat1 = Chat.builder()
                 .chatId(id)
-                .senderId(user1.getId())
-                .receiverId(user.getId())
+                .sender(user1)
+                .receiver(user)
                 .build();
         chatRepository.save(chat);
         chatRepository.save(chat1);

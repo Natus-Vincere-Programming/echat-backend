@@ -2,6 +2,7 @@ package ua.natusvincere.echat.chat;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ua.natusvincere.echat.user.User;
 
 import java.util.UUID;
 
@@ -19,8 +20,10 @@ public class Chat {
     private UUID id;
     @Column(nullable = false, updatable = false)
     private UUID chatId;
-    @Column(nullable = false, updatable = false)
-    private UUID senderId;
-    @Column(nullable = false, updatable = false)
-    private UUID receiverId;
+    @ManyToOne
+    @JoinColumn(nullable = false, updatable = false, name = "sender_id")
+    private User sender;
+    @JoinColumn(nullable = false, updatable = false, name = "receiver_id")
+    @ManyToOne
+    private User receiver;
 }

@@ -1,12 +1,16 @@
 package ua.natusvincere.echat.chat;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import ua.natusvincere.echat.exception.BadRequestException;
+import ua.natusvincere.echat.exception.ForbiddenException;
 import ua.natusvincere.echat.user.User;
 import ua.natusvincere.echat.user.UserRepository;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,44 +23,56 @@ public class ChatService {
     private final SimpMessagingTemplate messagingTemplate;
     private final UserRepository userRepository;
 
-    public UUID getChatId(CreateChatRequest request, boolean createIfNotExists) {
-        return repository.findBySenderIdAndReceiverId(request.senderId(), request.receiverId())
-                .map(Chat::getChatId)
+    public CreateChatResponse getChatId(CreateChatRequest request, Principal principal,boolean createIfNotExists) {
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ForbiddenException("User not found"));
+        return repository.findBySenderIdAndReceiverId(user.getId(), request.receiverId())
+                .map(chat -> CreateChatResponse.builder()
+                        .chatId(chat.getChatId())
+                        .build())
                 .or(() -> {
                     if (!createIfNotExists){
                         return Optional.empty();
                     }
-                    UUID chatId = createChat(request.senderId(), request.receiverId());
-                    Optional<Chat> chat = repository.findByChatIdAndSenderId(chatId, request.receiverId());
+                    User receiver = userRepository.findById(request.receiverId())
+                            .orElseThrow(() -> new BadRequestException("Receiver not found"));
+                    UUID chatId = createChat(user.getId(), request.receiverId());
+                    Optional<Chat> chat = repository.findByChatIdAndSender(chatId, receiver);
                     chat.ifPresent(this::informCreationChat);
-                    return Optional.of(chatId);
+                    return Optional.of(CreateChatResponse.builder()
+                            .chatId(chatId)
+                            .build());
                 }).orElseThrow();
     }
 
     @SneakyThrows
     private void informCreationChat(Chat chat) {
         messagingTemplate.convertAndSendToUser(
-                chat.getSenderId().toString(), "/queue/chats",
+                chat.getSender().getId().toString(), "/queue/chats",
                 ChatNotification.builder()
                         .chatId(chat.getChatId())
-                        .receiverId(chat.getReceiverId())
-                        .senderId(chat.getSenderId())
+                        .receiverId(chat.getReceiver().getId())
+                        .senderId(chat.getSender().getId())
                         .build()
         );
     }
 
     private UUID createChat(UUID senderId, UUID receiverId) {
         UUID chatId = UUID.randomUUID();
+        User sender = userRepository.findById(senderId)
+                .orElseThrow(() -> new BadRequestException("Sender not found"));
+        User receiver = userRepository.findById(receiverId)
+                .orElseThrow(() -> new BadRequestException("Receiver not found"));
         Chat senderChat = Chat.builder()
                 .chatId(chatId)
-                .senderId(senderId)
-                .receiverId(receiverId)
+                .sender(sender)
+                .receiver(receiver)
                 .build();
         repository.save(senderChat);
         Chat receiverChat = Chat.builder()
                 .chatId(chatId)
-                .senderId(receiverId)
-                .receiverId(senderId)
+                .sender(receiver)
+                .receiver(sender)
                 .build();
         repository.save(receiverChat);
         return chatId;
@@ -68,8 +84,30 @@ public class ChatService {
         return repository.findAllBySenderId(user.getId())
                 .stream().map(chat -> ChatResponse.builder()
                         .chatId(chat.getChatId().toString())
-                        .senderId(chat.getSenderId())
-                        .receiverId(chat.getReceiverId())
+                        .senderId(chat.getSender().getId())
+                        .receiverId(chat.getReceiver().getId())
                         .build()).toList();
+    }
+
+    public ChatResponse getChatByChatId(UUID chatId, Principal principal) {
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ForbiddenException("User not found"));
+        return repository.findByChatIdAndSender(chatId, user)
+                .map(chat -> ChatResponse.builder()
+                        .chatId(chat.getChatId().toString())
+                        .senderId(chat.getSender().getId())
+                        .receiverId(chat.getReceiver().getId())
+                        .build())
+                .orElseThrow(() -> new BadRequestException("Chat not found"));
+    }
+
+    @Transactional
+    public void deleteChat(UUID chatId, Principal principal) {
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ForbiddenException("User not found"));
+        if (!repository.existsByChatIdAndSenderId(chatId, user.getId())) {
+            throw new BadRequestException("Chat not found");
+        }
+        repository.deleteByChatId(chatId);
     }
 }

@@ -1,6 +1,7 @@
 package ua.natusvincere.echat.chat;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import ua.natusvincere.echat.user.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,5 +12,9 @@ public interface ChatRepository extends JpaRepository<Chat, UUID> {
 
     List<Chat> findAllBySenderId(UUID senderId);
 
-    Optional<Chat> findByChatIdAndSenderId(UUID chatId, UUID senderId);
+    Optional<Chat> findByChatIdAndSender(UUID chatId, User sender);
+
+    boolean existsByChatIdAndSenderId(UUID chatId, UUID senderId);
+
+    void deleteByChatId(UUID chatId);
 }

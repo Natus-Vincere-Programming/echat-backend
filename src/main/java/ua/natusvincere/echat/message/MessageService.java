@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ua.natusvincere.echat.chat.Chat;
 import ua.natusvincere.echat.chat.ChatRepository;
 import ua.natusvincere.echat.exception.BadRequestException;
+import ua.natusvincere.echat.exception.ForbiddenException;
 import ua.natusvincere.echat.user.User;
 import ua.natusvincere.echat.user.UserRepository;
 
@@ -43,9 +44,10 @@ public class MessageService {
 
     @SneakyThrows
     private void informChat(Message savedMessage) {
+        User sender = savedMessage.getSender();
         Chat chat = chatRepository
-                .findByChatIdAndSenderId(
-                        savedMessage.getChatId(), savedMessage.getSender().getId()
+                .findByChatIdAndSender(
+                        savedMessage.getChatId(), sender
                 ).orElseThrow();
         MessageNotification notification = MessageNotification.builder()
                 .createdAt(savedMessage.getCreatedAt())
@@ -60,16 +62,17 @@ public class MessageService {
                 destination, notification
         );
         messagingTemplate.convertAndSendToUser(
-                chat.getReceiverId().toString(),
+                chat.getReceiver().getId().toString(),
                 destination, notification
         );
     }
 
     public MessageResponse getLastMessage(UUID chatId, Principal principal) {
-        User user = userRepository.findByEmail(principal.getName()).orElseThrow();
-        Chat chat = chatRepository.findByChatIdAndSenderId(chatId, user.getId())
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ForbiddenException("User not found"));
+        Chat chat = chatRepository.findByChatIdAndSender(chatId, user)
                 .orElseThrow(() -> new BadRequestException("Chat not found"));
-        if (!chat.getSenderId().equals(user.getId()) && !chat.getReceiverId().equals(user.getId())) {
+        if (!chat.getSender().getId().equals(user.getId()) && !chat.getReceiver().getId().equals(user.getId())) {
             throw new BadRequestException("Chat does not belong to the user");
         }
         return messageRepository.findFirstByChatIdOrderByCreatedAtDesc(chatId)
@@ -85,19 +88,20 @@ public class MessageService {
     }
 
     public Long getAmountUnreadMessages(UUID chatId, Principal principal) {
-        User user = userRepository.findByEmail(principal.getName()).orElseThrow();
-        Chat chat = chatRepository.findByChatIdAndSenderId(chatId, user.getId())
+        User user = userRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new ForbiddenException("User not found"));
+        Chat chat = chatRepository.findByChatIdAndSender(chatId, user)
                 .orElseThrow(() -> new BadRequestException("Chat not found"));
-        if (!chat.getSenderId().equals(user.getId()) && !chat.getReceiverId().equals(user.getId())) {
+        if (!chat.getSender().getId().equals(user.getId()) && !chat.getReceiver().getId().equals(user.getId())) {
             throw new BadRequestException("Chat does not belong to the user");
         }
         Long sent = messageRepository
                 .countByChatIdAndSenderIdAndStatus(
-                        chatId, chat.getReceiverId(), MessageStatus.SENT
+                        chatId, chat.getReceiver().getId(), MessageStatus.SENT
                 );
         Long delivered = messageRepository
                 .countByChatIdAndSenderIdAndStatus(
-                        chatId, chat.getReceiverId(), MessageStatus.DELIVERED
+                        chatId, chat.getReceiver().getId(), MessageStatus.DELIVERED
                 );
 
         return sent + delivered;
